@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 declare -a repo_install=("PacketLib" "RTAtelem" "RTAConfig" "RTAtelemDemo")
-declare -a repo=("RTAEBSimIce" "RTACoreIce1" "RTAMonitor")
+declare -a repo=("RTAEBSimIce" "RTACoreIce" "RTAMonitor")
 
 trap exit err
 
