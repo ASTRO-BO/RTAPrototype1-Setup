@@ -1,0 +1,6 @@
+This project has a couple of scripts to update/install RTA sub-projects.
+
+Requires 2 environment variables to be set:
+
+   $ export CTARTA=/rta/install/prefix
+   $ export CTARTAREPOS=/path/to/existing/git/repos
