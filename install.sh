@@ -19,7 +19,7 @@ do
     make -j5
     echo
     echo "Installing $i..."
-	make install prefix=$CTARTAREPOS
+    make install prefix=$CTARTA
 done
 
 for i in "${repo[@]}"
