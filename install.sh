@@ -7,7 +7,8 @@ trap exit err
 
 for i in "${repo_install[@]}"
 do
-    cd $CTARTAREPOS/$i
+	pushd $PWD
+    cd $i
     if [[ $1 == "clean" ]]
     then
         echo
@@ -20,11 +21,13 @@ do
     echo
     echo "Installing $i..."
     make install prefix=$CTARTA
+	popd
 done
 
 for i in "${repo[@]}"
 do
-    cd $CTARTAREPOS/$i
+	pushd $PWD
+    cd $i
     if [[ $1 == "clean" ]]
     then
         echo
@@ -34,4 +37,5 @@ do
     echo
     echo "Building $i..."
     make -j5
+	popd
 done

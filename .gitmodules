@@ -1,0 +1,27 @@
+[submodule "PacketLib"]
+	path = PacketLib
+	url = git@github.com:ASTRO-BO/PacketLib.git
+[submodule "RTAtelem"]
+	path = RTAtelem
+	url = git@github.com:ASTRO-BO/RTAtelem.git
+[submodule "RTAConfig"]
+	path = RTAConfig
+	url = git@github.com:ASTRO-BO/RTAConfig.git
+[submodule "RTAtelemDemo"]
+	path = RTAtelemDemo
+	url = git@github.com:ASTRO-BO/RTAtelemDemo.git
+[submodule "RTAEBSimIce"]
+	path = RTAEBSimIce
+	url = git@github.com:ASTRO-BO/RTAEBSimIce.git
+[submodule "RTACoreIce"]
+	path = RTACoreIce
+	url = git@github.com:ASTRO-BO/RTACoreIce.git
+[submodule "RTAMonitor"]
+	path = RTAMonitor
+	url = git@github.com:ASTRO-BO/RTAMonitor.git
+[submodule "RTAViewArray"]
+	path = RTAViewArray
+	url = git@github.com:ASTRO-BO/RTAViewArray.git
+[submodule "RTAViewCamera"]
+	path = RTAViewCamera
+	url = git@github.com:ASTRO-BO/RTAViewCamera.git
