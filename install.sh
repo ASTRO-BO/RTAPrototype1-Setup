@@ -14,13 +14,14 @@ do
         echo
         echo "Cleaning $i..."
         make clean
+    else
+        echo
+        echo "Building $i..."
+        make -j5
+        echo
+        echo "Installing $i..."
+        make install prefix=$CTARTA
     fi
-    echo
-    echo "Building $i..."
-    make -j5
-    echo
-    echo "Installing $i..."
-    make install prefix=$CTARTA
 	popd
 done
 
@@ -33,9 +34,10 @@ do
         echo
         echo "Cleaning $i..."
         make clean
+    else
+        echo
+        echo "Building $i..."
+        make -j5
     fi
-    echo
-    echo "Building $i..."
-    make -j5
 	popd
 done
