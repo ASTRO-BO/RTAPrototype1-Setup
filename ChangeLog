@@ -1,0 +1,12 @@
+2014-04-24 Andrea Bulgarelli <bulgarelli@iasfbo.inaf.it>, Andrea Zoli <zoli@iasfbo.inaf.it>, Valentina Fioretti <fioretti@iasfbo.inaf.it>
+TAG v1.0.0
+ 04c3e8e968b344ad6fe2925384d03c080afd3c0d PacketLib (v4.0.2)
+ 840123ca7430ffdb48dbff5cb0fc83944673f86b RTAConfig (v1.0.0)
+ 57125ff57de6203cb8451117ce20a088e743512f RTACoreIce (v1.0.0)
+ 4acdc22b5735cd6463ed8aa2f06da551634b338d RTAEBSimIce (v1.0.0)
+ c9fad5f8b6ef2c91575a841cc5d5292800f9df00 RTAMonitor (v1.0.0)
+ a080ef8fae42830b7112099c608d44fdf0485ccc RTAViewArray (v1.0.0)
+ e616ef6c0efa3c75655511d39dc5af1d8ed73d35 RTAViewCamera (heads/master)
+ c75f241921a3c2c99c66e20b6982f07f682c659c RTAtelem (v1.4.4)
+ 5d1c5ae6b7523b87745129b5fb3f4a056f8addb7 RTAtelemDemo (v1.3.0)
+ 69205aaf1f6d3b9ed705588e517b692b175a8ead libQLBase (v0.3.2-9-g69205aa)

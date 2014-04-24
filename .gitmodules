@@ -12,10 +12,10 @@
 	url = git@github.com:ASTRO-BO/RTAtelemDemo.git
 [submodule "RTAEBSimIce"]
 	path = RTAEBSimIce
-	url = git@github.com:ASTRO-BO/RTAEBSimIce.git
+	url = git@github.com:ASTRO-EDU/RTAEBSimIce.git
 [submodule "RTACoreIce"]
 	path = RTACoreIce
-	url = git@github.com:ASTRO-BO/RTACoreIce.git
+	url = git@github.com:ASTRO-EDU/RTACoreIce.git
 [submodule "RTAMonitor"]
 	path = RTAMonitor
 	url = git@github.com:ASTRO-BO/RTAMonitor.git
@@ -25,3 +25,6 @@
 [submodule "RTAViewCamera"]
 	path = RTAViewCamera
 	url = git@github.com:ASTRO-BO/RTAViewCamera.git
+[submodule "libQLBase"]
+	path = libQLBase
+	url = git@github.com:ASTRO-BO/libQLBase.git
