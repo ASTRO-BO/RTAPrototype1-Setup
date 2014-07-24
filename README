@@ -1,11 +1,74 @@
-This project has a couple of scripts to update/install RTA sub-projects.
+1. INTRODUCTION
 
-Requires 2 environment variables to be set:
+RTAPrototypeV1-Setup build the RTA prototype for the CTA Project.
 
-   $ export CTARTA=/rta/install/prefix
-   $ export CTARTAREPOS=/path/to/existing/git/repos
+The submodules are free software, released under the GNU GPL 2. See the LICENSE file present within the submodules.
 
-For abmac2:
-   . ~/profile.port
-   export CTARTA=<>
-   export DYLD_FALLBACK_LIBRARY_PATH=/opt/local/lib:$CTARTA/lib:
+2. QUICK START
+
+In order to download the submodules required for the installation process you need to run:
+
+    git submodule update --init
+
+3. REQUIREMENTS
+
+Basic requirements:
+    python 2.7
+    cfitsio
+	root 5
+	ZerocIce 3.5
+    pyqt4
+    chaco
+    pyfits
+
+On Mac OS X the packages are called cfitsio root5 py27-zeroc-ice35 py27-pyqt4 py27-chaco py27-pyfits. Remember to select the correct python27 using 'sudo port select python python27'.
+
+Optional requirements:
+    doxygen (1.8)
+    boost
+
+4. COMPILATION / SETUP
+
+In order to build the submodules you need to set a common path of installation and set compiler environment.
+
+    export CTARTA=/install/path
+    export CPLUS_INCLUDE_PATH=/opt/local/include:$CPLUS_INCLUDE_PATH
+    export LIBRARY_PATH=/opt/local/lib:$LIBRARY_PATH
+    export CPLUS_INCLUDE_PATH=$CTARTA/include:$CPLUS_INCLUDE_PATH
+    export LIBRARY_PATH=$CTARTA/lib:$LIBRARY_PATH
+
+then run the installer:
+
+    ./install.sh
+
+5. RUNNING PROGRAMS
+
+In order to run the Quick Look on a Linux platform you need to append $ASTRI/lib to the LD_LIBRARY_PATH:
+
+    export CTARTA=/install/path
+    export ICE_HOME=/opt/local
+    export LD_LIBRARY_PATH=$CTARTA/lib:$LD_LIBRARY_PATH
+    export DYLD_LIBRARY_PATH=$CTARTA/lib:$DYLD_LIBRARY_PATH
+
+
+Sometimes it is useful to load the fallback profile. The following is used on abmac2:
+
+    . ~/profile.port
+    export CTARTA=/install/path
+    export DYLD_FALLBACK_LIBRARY_PATH=/opt/local/lib:$CTARTA/lib
+
+Eventually, to run the the prototype you need just to:
+
+   ./runPrototype.sh data.raw
+
+where the data.raw file is the input file for the EB Simulator could be generated using RTAencoder or RTAencoderRoot.
+
+If you have some troubles during the launch of the processes you can see the logs directory for details.
+
+To kill all the processes of the prototype you can use:
+
+    ./runPrototype.sh -k
+
+6. GETTING MORE INFORMATION
+
+If you need additional informations you can ask for support via email at bulgarelli@iasfbo.inaf.it, fioretti@iasfbo.inaf.it or zoli@iasfbo.inaf.it.
