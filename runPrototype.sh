@@ -1,6 +1,8 @@
 #!/usr/bin/env bash
 
 DELAY=3
+LOGDIR=$CTARTA/var/log/rta
+CONFIGDIR=$CTARTA/share
 
 function pskill {
 	procs=$(ps -o pid,args | grep $1 | grep -v grep)
@@ -41,58 +43,47 @@ else
 	echo "Using input file $file.."
 fi
 
-mkdir -p logs
+mkdir -p $CTARTA/var/log/rta
 
 ## Ports 20000
-cd RTAMonitor
 echo "Starting RTAMonitor.."
-nohup python RTAMonitorQt.py &> ../logs/monitor.log &
+nohup python RTAMonitorQt.py --Ice.Config=$CONFIGDIR/monitor/config.monitor &> $LOGDIR/monitor.log &
 sleep $DELAY
-cd ..
 
 ## Ports 10111, 10112, 10113
-cd RTAViewCamera
 echo "Starting RTAViewCamera 1.."
-nohup python RTAViewCamera.py 1 --Ice.Config=config.server1 &> ../logs/viewcamera1.log &
+nohup python RTAViewCamera.py 1 --Ice.Config=$CONFIGDIR/viewcamera/config.server1 &> $LOGDIR/viewcamera1.log &
 echo "Starting RTAViewCamera 2.."
-nohup python RTAViewCamera.py 2 --Ice.Config=config.server2 &> ../logs/viewcamera2.log &
+nohup python RTAViewCamera.py 2 --Ice.Config=$CONFIGDIR/viewcamera/config.server2 &> $LOGDIR/viewcamera2.log &
 echo "Starting RTAViewCamera 3.."
-nohup python RTAViewCamera.py 3 --Ice.Config=config.server3 &> ../logs/viewcamera3.log &
+nohup python RTAViewCamera.py 3 --Ice.Config=$CONFIGDIR/viewcamera/config.server3 &> $LOGDIR/viewcamera3.log &
 sleep $DELAY
-cd ..
 
 ## Ports 10101
-cd RTAViewArray
 echo "Starting RTAViewer.."
-nohup python RTAViewer.py &> ../logs/viewer.log &
+nohup python RTAViewer.py --Ice.Config=$CONFIGDIR/viewer/config.server &> $LOGDIR/viewer.log &
 sleep $DELAY
-cd ..
 
 ## Connects to RTAViewCamera
 ## Ports 50001, 50002, 50003
-cd RTACoreIce
 echo "Starting RTAWaveServer 1.."
-nohup ./RTAWaveServer SmallTelescope --Ice.Config=config.server1 &> ../logs/wavewerver1.log &
+nohup ./RTAWaveServer --Ice.Config=$CONFIGDIR/core/waveserver/config.server1 SmallTelescope &> $LOGDIR/wavewerver1.log &
 echo "Starting RTAWaveServer 2.."
-nohup ./RTAWaveServer MediumTelescope --Ice.Config=config.server2 &> ../logs/wavewerver2.log &
+nohup ./RTAWaveServer --Ice.Config=$CONFIGDIR/core/waveserver/config.server2 MediumTelescope &> $LOGDIR/wavewerver2.log &
 echo "Starting RTAWaveServer 3.."
-nohup ./RTAWaveServer LargeTelescope --Ice.Config=config.server3 &> ../logs/wavewerver3.log &
+nohup ./RTAWaveServer --Ice.Config=$CONFIGDIR/core/waveserver/config.server3 LargeTelescope &> $LOGDIR/wavewerver3.log &
 sleep $DELAY
-cd ..
 
 ## Connects to 3 RTAWaveServers
 ## Connects to RTAMonitor
 ## Connects to RTAViewer
-cd RTACoreIce
 echo "Starting RTAReceiver.."
-nohup ./RTAReceiver_Ice $CTARTA/share/rtatelem/rta_fadc_all.stream &> ../logs/receiver.log &
+nohup ./RTAReceiver_Ice $CTARTA/share/rtatelem/rta_fadc_all.stream --Ice.Config=$CONFIGDIR/core/receiver/config.receiverNoStorm &> $LOGDIR/receiver.log &
 sleep $DELAY
-cd ..
 
 ## Connects to RTAReceiver
 ## Connects to RTAMonitor
-cd RTAEBSimIce
 echo "Starting RTAEBSim.."
-nohup ./RTAEBSim $CTARTA/share/rtatelem/rta_fadc_all.stream $file 0 &> ../logs/ebsim.log &
+nohup ./RTAEBSim $CTARTA/share/rtatelem/rta_fadc_all.stream $file 0 --Ice.Config=$CONFIGDIR/ebsim/config.sim &> $LOGDIR/ebsim.log &
 
 echo "Pipeline started!"

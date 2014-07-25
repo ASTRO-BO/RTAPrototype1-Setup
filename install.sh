@@ -52,3 +52,4 @@ do
 	popd
 done
 
+cp -p runPrototype.sh $CTARTA/bin
