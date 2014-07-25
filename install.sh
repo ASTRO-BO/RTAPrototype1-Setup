@@ -2,9 +2,10 @@
 
 trap exit ERR
 
+NTHREADS=5
+
 declare -a cmake_repoinstall=("libQLBase")
-declare -a repo_install=("PacketLib" "RTAtelem" "RTAConfig" "RTAtelemDemo")
-declare -a repo=("RTAEBSimIce" "RTACoreIce" "RTAMonitor")
+declare -a repo_install=("PacketLib" "RTAtelem" "RTAConfig" "RTAtelemDemo" "RTAEBSimIce" "RTACoreIce" "RTAMonitor" "RTAViewArray" "RTAViewCamera")
 
 for i in "${cmake_repoinstall[@]}"
 do
@@ -24,7 +25,7 @@ do
           -DCMAKE_INSTALL_PREFIX:PATH=$CTARTA \
           -DBoost_NO_BOOST_CMAKE=ON \
           ..
-        make VERBOSE=1 -j5
+        make VERBOSE=1 -j$NTHREADS
         echo "Installing $1..."
         make install
     fi
@@ -43,7 +44,7 @@ do
     else
         echo
         echo "Building $i..."
-        make -j5
+        make -j$NTHREADS
         echo
         echo "Installing $i..."
         make install prefix=$CTARTA
@@ -51,19 +52,3 @@ do
 	popd
 done
 
-for i in "${repo[@]}"
-do
-	pushd $PWD
-    cd $i
-    if [[ $1 == "clean" ]]
-    then
-        echo
-        echo "Cleaning $i..."
-        make clean
-    else
-        echo
-        echo "Building $i..."
-        make -j5
-    fi
-	popd
-done
