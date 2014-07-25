@@ -1,3 +1,20 @@
+2014-07-25 Andrea Bulgarelli <bulgarelli@iasfbo.inaf.it>, Andrea Zoli <zoli@iasfbo.inaf.it>, Valentina Fioretti <fioretti@iasfbo.inaf.it>
+TAG v1.1.0
+* Add runPrototype.sh script.
+* Updates README.
+* Update installer to install python modules.
+
+ de37d05ef4a7068573a5a9281fe3dd9fac366505 PacketLib (v4.3.1)
+ 840123ca7430ffdb48dbff5cb0fc83944673f86b RTAConfig (v1.0.0)
+ d7e1e3562c66095229e4742effceebebe59535c5 RTACoreIce (v1.0.1)
+ 5b947937aab3d628eaae31daade0dbb56d09183a RTAEBSimIce (v1.0.1)
+ e68eb342527626c1026c1dca3cb19804bf75227e RTAMonitor (v1.0.1)
+ c51b296d6bdf02bcfec94e87036982107bb7bd22 RTAViewArray (v1.0.1)
+ 166792b77c3dbc0bdeaceaa93b35d4bfba522e60 RTAViewCamera (v1.0.1)
+ 2917c56ffabfa3fb47be1c1d4afeae653cd58918 RTAtelem (v1.5.0)
+ cbbfb5a833366edc5c7ac42220bf2862e3fe580c RTAtelemDemo (v1.4.0)
+ d2129b9196c0283d1a41d91895d7ee5970363ff8 libQLBase (v0.3.3)
+
 2014-04-24 Andrea Bulgarelli <bulgarelli@iasfbo.inaf.it>, Andrea Zoli <zoli@iasfbo.inaf.it>, Valentina Fioretti <fioretti@iasfbo.inaf.it>
 TAG v1.0.0
  04c3e8e968b344ad6fe2925384d03c080afd3c0d PacketLib (v4.0.2)
