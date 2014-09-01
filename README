@@ -12,16 +12,20 @@ In order to download the submodules required for the installation process you ne
 
 3. REQUIREMENTS
 
-Basic requirements:
-    python 2.7
+Basic requirements for "minimal" version:
     cfitsio
 	root 5
 	ZerocIce 3.5
-    pyqt4
-    chaco
+
+For "nogui" version you need also:
+    python 2.7
     pyfits
 
-On Mac OS X the packages are called cfitsio root5 py27-zeroc-ice35 py27-pyqt4 py27-chaco py27-pyfits. Remember to select the correct python27 using 'sudo port select python python27'.
+For "complete" version (with gui) you need also:
+    pyqt4
+    chaco
+
+On Mac OS X all the packages are cfitsio root5 py27-zeroc-ice35 py27-pyqt4 py27-chaco py27-pyfits. Remember to select the correct python27 using 'sudo port select python python27'.
 
 Optional requirements:
     doxygen (1.8)
@@ -37,7 +41,16 @@ In order to build the submodules you need to set a common path of installation a
     export CPLUS_INCLUDE_PATH=$CTARTA/include:$CPLUS_INCLUDE_PATH
     export LIBRARY_PATH=$CTARTA/lib:$LIBRARY_PATH
 
-then run the installer:
+For the "minimal" installation you have to run:
+
+	./install.sh minimal
+
+For the "nogui" installation run:
+
+	./install.sh nogui
+
+
+For the "complete" installation run:
 
     ./install.sh
 
@@ -57,11 +70,15 @@ Sometimes it is useful to load the fallback profile. The following is used on ab
     export CTARTA=/install/path
     export DYLD_FALLBACK_LIBRARY_PATH=/opt/local/lib:$CTARTA/lib
 
-Eventually, to run the the prototype you need just to:
+Eventually, to run the the complete prototype you need just to:
 
    ./runPrototype.sh data.raw
 
 where the data.raw file is the input file for the EB Simulator could be generated using RTAencoder or RTAencoderRoot.
+
+For the command line version (if you have no gui installed):
+
+	./runPrototypeCommandLine.sh data.raw
 
 If you have some troubles during the launch of the processes you can see the logs directory for details.
 

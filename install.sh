@@ -5,7 +5,16 @@ trap exit ERR
 NTHREADS=5
 
 declare -a cmake_repoinstall=("libQLBase")
-declare -a repo_install=("PacketLib" "RTAtelem" "RTAConfig" "RTAtelemDemo" "RTAEBSimIce" "RTACoreIce" "RTAMonitor" "RTAViewArray" "RTAViewCamera")
+
+if [[ $1 == "minimal" ]]
+then
+	declare -a repo_install=("PacketLib" "RTAtelem" "RTAConfig" "RTAEBSimIce" "RTACoreIce")
+elif [[ $1 == "nogui" ]]
+then
+	declare -a repo_install=("PacketLib" "RTAtelem" "RTAConfig" "RTAtelemDemo" "RTAEBSimIce" "RTACoreIce")
+else
+	declare -a repo_install=("PacketLib" "RTAtelem" "RTAConfig" "RTAtelemDemo" "RTAEBSimIce" "RTACoreIce" "RTAMonitor" "RTAViewArray" "RTAViewCamera")
+fi
 
 for i in "${cmake_repoinstall[@]}"
 do
@@ -52,4 +61,8 @@ do
 	popd
 done
 
-cp -p runPrototype.sh $CTARTA/bin
+if [[ $1 != "clean" ]]
+then
+	cp -p runPrototype.sh $CTARTA/bin
+	cp -p runPrototypeCommandLine.sh $CTARTA/bin
+fi
