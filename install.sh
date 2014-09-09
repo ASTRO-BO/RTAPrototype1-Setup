@@ -65,4 +65,5 @@ if [[ $1 != "clean" ]]
 then
 	cp -p runPrototype.sh $CTARTA/bin
 	cp -p runPrototypeCommandLine.sh $CTARTA/bin
+	cp -p mean.sh $CTARTA/bin
 fi
