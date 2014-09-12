@@ -5,7 +5,7 @@ LOGDIR=$CTARTA/var/log/rta
 CONFIGDIR=$CTARTA/share
 
 function pskill {
-	procs=$(ps -o pid,args | grep $1 | grep -v grep)
+	procs=$(ps -xo pid,args | grep $1 | grep -v grep)
 	while read -r line; do
 		if [[ -n $line ]]
 		then
