@@ -13,6 +13,7 @@ In order to download the submodules required for the installation process you ne
 3. REQUIREMENTS
 
 Basic requirements for "minimal" version:
+	cmake
     cfitsio
 	root 5
 	ZerocIce 3.5
@@ -25,7 +26,7 @@ For "complete" version (with gui) you need also:
     pyqt4
     chaco
 
-On Mac OS X all the packages are cfitsio root5 py27-zeroc-ice35 py27-pyqt4 py27-chaco py27-pyfits. Remember to select the correct python27 using 'sudo port select python python27'.
+On Mac OS X all the packages are cmake cfitsio root5 py27-zeroc-ice35 py27-pyqt4 py27-chaco py27-pyfits. Remember to select the correct python27 using 'sudo port select python python27'.
 
 Optional requirements:
     doxygen (1.8)
