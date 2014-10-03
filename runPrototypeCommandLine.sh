@@ -55,12 +55,12 @@ sleep $DELAY
 ## Connects to RTAMonitor
 ## Connects to RTAViewer
 echo "Starting RTAReceiver.."
-nohup ./RTAReceiver_Ice $CTARTA/share/rtatelem/rta_fadc_all.stream --Ice.Config=$CONFIGDIR/core/receiver/config.receiverNoStorm &> $LOGDIR/receiver.log &
+nohup ./RTAReceiver_Ice $CTARTA/share/rtatelem/rta_fadc_all.xml --Ice.Config=$CONFIGDIR/core/receiver/config.receiverNoStorm &> $LOGDIR/receiver.log &
 sleep $DELAY
 
 ## Connects to RTAReceiver
 ## Connects to RTAMonitor
 echo "Starting RTAEBSim.."
-nohup ./RTAEBSim $CTARTA/share/rtatelem/rta_fadc_all.stream $file 0 --Ice.Config=$CONFIGDIR/ebsim/config.sim &> $LOGDIR/ebsim.log &
+nohup ./RTAEBSim $CTARTA/share/rtatelem/rta_fadc_all.xml $file 0 --Ice.Config=$CONFIGDIR/ebsim/config.sim &> $LOGDIR/ebsim.log &
 
 echo "Pipeline started!"
