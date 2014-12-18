@@ -1,14 +1,10 @@
 1. INTRODUCTION
 
-RTAPrototypeV1-Setup build the RTA prototype for the CTA Project.
-
-The submodules are free software, released under the GNU GPL 2. See the LICENSE file present within the submodules.
+RTAPrototype1-Setup build the RTA first prototype for the CTA Project. It is based on ZeroC ICE as a middleware for communication and uses chaco for realtime plotting.
 
 2. QUICK START
 
-In order to download the submodules required for the installation process you need to run:
-
-    git submodule update --init
+You just need to check for the requirements before the setup launch.
 
 3. REQUIREMENTS
 
@@ -34,38 +30,35 @@ Optional requirements:
 
 4. COMPILATION / SETUP
 
-In order to build the submodules you need to set a common path of installation and set compiler environment.
+To install the prototype you just need to run the install script:
 
-    export CTARTA=/install/path
-    export CPLUS_INCLUDE_PATH=/opt/local/include:$CPLUS_INCLUDE_PATH
-    export LIBRARY_PATH=/opt/local/lib:$LIBRARY_PATH
-    export CPLUS_INCLUDE_PATH=$CTARTA/include:$CPLUS_INCLUDE_PATH
-    export LIBRARY_PATH=$CTARTA/lib:$LIBRARY_PATH
+	./install
 
-For the "minimal" installation you have to run:
+You have some options for the build, for example if you want to change the prefix use -p:
 
-	./install.sh minimal
+Usage: ./install [-hsdv] [-p PREFIX] [-n NUMTHREADS] [clean|minimal|nogui]
+    -h             print this help
+    -p PREFIX      set installation prefix, default is $HOME/local.rtaproto1
+    -n NUMTHREADS  default number of threads is the number of cores
+    -d             compile with debug
+    -s             skip download/update
+    -v             verbose output
 
-For the "nogui" installation run:
-
-	./install.sh nogui
-
-
-For the "complete" installation run:
-
-    ./install.sh
+The "nogui" option means you don't want to install the gui part (python viewers) and the "minimal" means no gui and no RTAtelem.
 
 5. RUNNING PROGRAMS
 
-In order to run the Quick Look on a Linux platform you need to append $ASTRI/lib to the LD_LIBRARY_PATH:
+In order to run the Quick Look on a Linux platform you need to export the following environment:
 
-    export CTARTA=/install/path
-    export ICE_HOME=/opt/local
+    export CTARTA=<prefix>
+    export ICE_HOME=<ice_home_path>
     export LD_LIBRARY_PATH=$CTARTA/lib:$LD_LIBRARY_PATH
+
+If you are running MacOS X you will need also:
+
     export DYLD_LIBRARY_PATH=$CTARTA/lib:$DYLD_LIBRARY_PATH
 
-
-Sometimes it is useful to load the fallback profile. The following is used on abmac2:
+and sometimes it is required to load the fallback profile in order to work. The following is used on abmac2:
 
     . ~/profile.port
     export CTARTA=/install/path
@@ -73,19 +66,19 @@ Sometimes it is useful to load the fallback profile. The following is used on ab
 
 Eventually, to run the the complete prototype you need just to:
 
-   ./runPrototype.sh data.raw
+   ./rtaproto1_gui data.raw
 
 where the data.raw file is the input file for the EB Simulator could be generated using RTAencoder or RTAencoderRoot.
 
 For the command line version (if you have no gui installed):
 
-	./runPrototypeCommandLine.sh data.raw
+	./rtaproto1 data.raw
 
 If you have some troubles during the launch of the processes you can see the logs directory for details.
 
 To kill all the processes of the prototype you can use:
 
-    ./runPrototype.sh -k
+    ./rtaproto1 -k
 
 6. GETTING MORE INFORMATION
 
