@@ -1,0 +1,233 @@
+#!/usr/bin/env bash
+
+trap exitfunc ERR
+
+devel=no # if set to yes it aligns to last commits of origin/master (for each project)
+prefix=$HOME/local.rtaproto1
+sourcedir=$PWD
+build_type=Release
+if [[ $platform == "Darwin" ]] ; then
+	nthreads=$(sysctl hw.ncpu | awk '{print $2}')
+else
+	nthreads=$(cat /proc/cpuinfo | grep processor | wc -l)
+fi
+clean=$1
+
+function exitfunc() {
+	if [[ $plaform == "Darwin" ]] ; then
+		tput seaf op
+	fi
+
+	exit
+}
+
+function echo_red() {
+	if [[ $platform == "Darwin" ]] ; then
+		tput setaf 1
+		echo $@
+		tput setaf op
+	else
+		echo -e "\e[00;31m$1\e[00m"
+	fi
+}
+
+function set_debug_flags() {
+	if [[ $build_type == "Debug" ]] ; then
+		export CFLAGS="$CFLAGS -O0 -g" ; export CXXFLAGS="$CXXFLAGS -O0 -g"
+	else
+		export CFLAGS="$CFLAGS -O2" ; export CXXFLAGS="$CXXFLAGS -O2"
+	fi
+}
+
+function reset_flags() {
+	unset CFLAGS ; unset CXXFLAGS ; unset LDFLAGS
+}
+
+function update_repo {
+	reponame=$(basename $1 | cut -d'.' --complement -f2-)
+
+	cd $sourcedir/$reponame
+	git fetch --all
+
+	echo_red "#### updating $reponame repository"
+	git checkout master
+	if [[ ! -z $(git diff origin/master) ]] ; then
+		git pull origin master
+	fi
+
+	if [[ -z $(git branch | grep 'build') ]]; then
+		git branch build $2
+	else
+		if [[ ! -z $(git diff build $2) ]] ; then
+			git branch -D build
+			git branch build $2
+		fi
+	fi
+	echo_red "#### $reponame updated."
+
+	echo "$reponame tag: $2"
+	git checkout build
+}
+
+function show_help {
+	echo "Usage: $0 [-hsdv] [-p PREFIX] [-n NUMTHREADS] [clean|minimal|nogui]"
+	echo "    -h             print this help"
+	echo "    -p PREFIX      set installation prefix, default is \$HOME/local.rtaproto1"
+	echo "    -n NUMTHREADS  default number of threads is the number of cores"
+	echo "    -d             compile with debug"
+	echo "    -s             skip download/update"
+	echo "    -v             verbose output"
+	exit
+}
+
+#################################################
+# parse command options
+
+while getopts "hp:n:dsv" o;
+do
+	case "${o}" in
+		h)
+			show_help
+			;;
+
+		p)
+			eval prefix=${OPTARG}
+			;;
+
+		n)
+			eval nthreads=${OPTARG}
+			;;
+
+		d)
+			build_type=Debug
+			;;
+
+		v)
+			verbose="VERBOSE=1"
+			;;
+
+		s)
+			skip_update="true"
+			;;
+
+		*)
+			show_help
+			;;
+	esac
+done
+shift $((OPTIND-1))
+
+declare -a cmake_repoinstall=("libQLBase")
+if [[ $1 == "minimal" ]]
+then
+	declare -a repo_install=("PacketLib" "RTAtelem" "RTAConfig" "RTAEBSimIce" "RTACoreIce")
+elif [[ $1 == "nogui" ]]
+then
+	declare -a repo_install=("PacketLib" "RTAtelem" "RTAConfig" "RTAtelemDemo" "RTAEBSimIce" "RTACoreIce")
+else
+	declare -a repo_install=("PacketLib" "RTAtelem" "RTAConfig" "RTAtelemDemo" "RTAEBSimIce" "RTACoreIce" "RTAMonitor" "RTAViewArray" "RTAViewCamera")
+fi
+
+#################################################
+# check privileges and create prefix directories
+
+trap - ERR
+mkdir -p $prefix
+if [ $? -ne 0 ] ; then
+	trap exitfunc ERR
+	echo_red "You have not the write permissions on $prefix."
+	echo_red "Maybe you want to run the script as root? Trying with sudo.."
+	sudo=sudo
+	$sudo mkdir -p $prefix
+fi
+trap exitfunc ERR
+
+#################################################
+# download/update repositories
+
+if [[ $clean != "clean" && -z $skip_update ]] ; then
+	git submodule update --init
+
+	if [[ $devel == "yes" ]] ; then
+		update_repo git@github.com:ASTRO-BO/PacketLib.git master
+		update_repo git@github.com:ASTRO-BO/RTAConfig.git master
+		update_repo git@github.com:ASTRO-EDU/RTACoreIce.git master
+		update_repo git@github.com:ASTRO-EDU/RTAEBSimIce.git master
+		update_repo git@github.com:ASTRO-BO/RTAMonitor.git master
+		update_repo git@github.com:ASTRO-BO/RTAViewArray.git master
+		update_repo git@github.com:ASTRO-BO/RTAViewCamera.git master
+		update_repo git@github.com:ASTRO-BO/RTAtelem.git master
+		update_repo git@github.com:ASTRO-BO/RTAtelemDemo.git master
+		update_repo git@github.com:ASTRO-BO/libQLBase.git master
+	else
+		update_repo git@github.com:ASTRO-BO/PacketLib.git v4.3.3
+		update_repo git@github.com:ASTRO-BO/RTAConfig.git v1.0.1
+		update_repo git@github.com:ASTRO-EDU/RTACoreIce.git v1.1.0
+		update_repo git@github.com:ASTRO-EDU/RTAEBSimIce.git v1.0.2
+		update_repo git@github.com:ASTRO-BO/RTAMonitor.git v1.0.2
+		update_repo git@github.com:ASTRO-BO/RTAViewArray.git v1.0.1
+		update_repo git@github.com:ASTRO-BO/RTAViewCamera.git v1.0.1
+		update_repo git@github.com:ASTRO-BO/RTAtelem.git v1.6.0
+		update_repo git@github.com:ASTRO-BO/RTAtelemDemo.git v1.5.0
+		update_repo git@github.com:ASTRO-BO/libQLBase.git v0.3.3
+	fi
+fi
+
+#################################################
+# add prefix path to the environment
+export C_INCLUDE_PATH="$prefix/$i/include"${C_INCLUDE_PATH:+:$C_INCLUDE_PATH}
+export CPLUS_INCLUDE_PATH="$prefix/$i/include"${CPLUS_INCLUDE_PATH:+:$CPLUS_INCLUDE_PATH}
+export CMAKE_INCLUDE_PATH="$prefix/$i/include"${CMAKE_INCLUDE_PATH:+:$CMAKE_INCLUDE_PATH}
+export LIBRARY_PATH="$prefix/$i/lib"${LIBRARY_PATH:+:$LIBRARY_PATH}
+export CMAKE_LIBRARY_PATH="$prefix/$i/lib"${CMAKE_LIBRARY_PATH:+:$CMAKE_LIBRARY_PATH}
+export CTARTA=$prefix
+
+#################################################
+# build packages
+
+for i in "${cmake_repoinstall[@]}"
+do
+    pushd $PWD
+	cd $sourcedir/$i
+	cmake_builddir=$sourcedir/$i/build
+	if [[ $clean == "clean" ]] ; then
+		echo_red "#### cleaning $i"
+		rm -rf $cmake_builddir
+		echo_red "#### clean complete."
+	else
+		echo_red "#### installing $i $(git describe)"
+		mkdir -p $cmake_builddir ; cd $cmake_builddir
+	    cmake -DCMAKE_BUILD_TYPE=$build_type \
+	          -DCMAKE_INSTALL_PREFIX:PATH=$prefix \
+	           ..
+		$sudo make install -j$nthreads $verbose
+		echo_red "#### $i installation successful."
+	fi
+	popd
+done
+
+for i in "${repo_install[@]}"
+do
+	pushd $PWD
+	cd $sourcedir/$i
+	if [[ $clean == "clean" ]] ; then
+		echo_red "#### cleaning $i"
+		make clean
+		echo_red "#### clean complete."
+	else
+	echo_red "#### installing $i"
+		set_debug_flags
+		make -j$nthreads
+		$sudo make install prefix="$prefix"
+		reset_flags
+		echo_red "#### $i installation successful."
+	fi
+	popd
+done
+
+if [[ $1 != "clean" ]] ; then
+	cd $sourcedir
+	$sudo cp -p rtaproto1 $prefix/bin
+	$sudo cp -p rtaproto1_gui $prefix/bin
+	$sudo cp -p rtaproto1_zmq $prefix/bin
+fi

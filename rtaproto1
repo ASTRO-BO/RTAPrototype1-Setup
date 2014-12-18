@@ -1,0 +1,71 @@
+#!/usr/bin/env bash
+
+if [ -z "$CTARTA" ] ; then
+	echo "Error: You need to set the CTARTA env variable."
+	exit
+fi
+
+DELAY=3
+LOGDIR=$CTARTA/var/log/rta
+CONFIGDIR=$CTARTA/share
+
+function pskill {
+	procs=$(ps xo pid,args | grep $1 | grep -v grep)
+	while read -r line; do
+		if [[ -n $line ]]
+		then
+			pname=$(echo $line | cut -d' ' -f2-)
+			pid=$(echo $line | cut -d' ' -f1)
+			echo "Killing pid $pid: $pname"
+			kill -9 $pid
+		fi
+	done <<< "$procs"
+}
+
+if [[ $1 == "-k" ]]
+then
+	pskill RTAWaveServer
+	pskill RTAReceiver
+	pskill RTAEBSim
+	exit
+fi
+
+# Expects a .raw input file for ebsim
+if [[ ! -f $1 ]]
+then
+	echo "No simulator input file provided. Plear run:"
+	echo "$0 input.raw"
+	exit
+else
+	# get absolute path
+	case $1 in
+	  /*) file=$1;;
+	  *) file=$PWD/$1;;
+	esac
+	echo "Using input file $file.."
+fi
+
+mkdir -p $CTARTA/var/log/rta
+
+## Ports 50001, 50002, 50003
+echo "Starting RTAWaveServer 1.."
+nohup ./RTAWaveServer --Ice.Config=$CONFIGDIR/core/waveserver/config.server1 LargeTelescope &> $LOGDIR/waveserver1.log &
+echo "Starting RTAWaveServer 2.."
+nohup ./RTAWaveServer --Ice.Config=$CONFIGDIR/core/waveserver/config.server2 MediumTelescope &> $LOGDIR/waveserver2.log &
+echo "Starting RTAWaveServer 3.."
+nohup ./RTAWaveServer --Ice.Config=$CONFIGDIR/core/waveserver/config.server3 SmallTelescope &> $LOGDIR/waveserver3.log &
+sleep $DELAY
+
+## Connects to 3 RTAWaveServers
+## Connects to RTAMonitor
+## Connects to RTAViewer
+echo "Starting RTAReceiver.."
+nohup ./RTAReceiver_Ice $CTARTA/share/rtatelem/rta_fadc_all.xml --Ice.Config=$CONFIGDIR/core/receiver/config.receiverNoStorm &> $LOGDIR/receiver.log &
+sleep $DELAY
+
+## Connects to RTAReceiver
+## Connects to RTAMonitor
+echo "Starting RTAEBSim.."
+nohup ./RTAEBSim $CTARTA/share/rtatelem/rta_fadc_all.xml $file 0 --Ice.Config=$CONFIGDIR/ebsim/config.sim &> $LOGDIR/ebsim.log &
+
+echo "Pipeline started!"

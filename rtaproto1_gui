@@ -1,5 +1,10 @@
 #!/usr/bin/env bash
 
+if [ -z "$CTARTA" ] ; then
+	echo "Error: You need to set the CTARTA env variable."
+	exit
+fi
+
 DELAY=3
 LOGDIR=$CTARTA/var/log/rta
 CONFIGDIR=$CTARTA/share
@@ -32,7 +37,7 @@ fi
 if [[ ! -f $1 ]]
 then
 	echo "No simulator input file provided. Plear run:"
-	echo "./runPrototype.sh input.raw"
+	echo "$0 input.raw"
 	exit
 else
 	# get absolute path

@@ -25,19 +25,16 @@ then
 	exit
 fi
 
-# Expects a .raw input file for ebsim
-if [[ ! -f $1 ]]
-then
-	echo "No simulator input file provided. Plear run:"
-	echo "./runPrototypeCommandLine.sh input.raw"
+if [ -z "$CTARTA" ] ; then
+	echo "Error: You need to set the CTARTA env variable."
 	exit
-else
-	# get absolute path
-	case $1 in
-	  /*) file=$1;;
-	  *) file=$PWD/$1;;
-	esac
-	echo "Using input file $file.."
+fi
+
+cd $CTARTA/bin
+
+if [ ! -f RTAReceiverZMQ ] ; then
+	echo "Error: You have not build the ZMQ version. Add 'ctatools' in RTACoreIce project Makefile."
+	exit
 fi
 
 mkdir -p $CTARTA/var/log/rta
@@ -52,15 +49,8 @@ nohup ./RTAWaveServer --Ice.Config=$CONFIGDIR/core/waveserver/config.server3 Sma
 sleep $DELAY
 
 ## Connects to 3 RTAWaveServers
-## Connects to RTAMonitor
-## Connects to RTAViewer
-echo "Starting RTAReceiver.."
-nohup ./RTAReceiver_Ice $CTARTA/share/rtatelem/rta_fadc_all.xml --Ice.Config=$CONFIGDIR/core/receiver/config.receiverNoStorm &> $LOGDIR/receiver.log &
+echo "Starting RTAReceiverZMQ.."
+nohup ./RTAReceiverZMQ --Ice.Config=$CONFIGDIR/core/receiver/config.receiverNoStorm &> $LOGDIR/receiver.log &
 sleep $DELAY
-
-## Connects to RTAReceiver
-## Connects to RTAMonitor
-echo "Starting RTAEBSim.."
-nohup ./RTAEBSim $CTARTA/share/rtatelem/rta_fadc_all.xml $file 0 --Ice.Config=$CONFIGDIR/ebsim/config.sim &> $LOGDIR/ebsim.log &
 
 echo "Pipeline started!"
