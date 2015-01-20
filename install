@@ -6,6 +6,7 @@ devel=no # if set to yes it aligns to last commits of origin/master (for each pr
 prefix=$HOME/local.rtaproto1
 sourcedir=$PWD
 build_type=Release
+platform=$(uname -s)
 if [[ $platform == "Darwin" ]] ; then
 	nthreads=$(sysctl hw.ncpu | awk '{print $2}')
 else
