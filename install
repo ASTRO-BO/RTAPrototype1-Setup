@@ -2,7 +2,6 @@
 
 trap exitfunc ERR
 
-devel=no # if set to yes it aligns to last commits of origin/master (for each project)
 prefix=$HOME/local.rtaproto1
 sourcedir=$PWD
 build_type=Release
@@ -42,32 +41,6 @@ function set_debug_flags() {
 
 function reset_flags() {
 	unset CFLAGS ; unset CXXFLAGS ; unset LDFLAGS
-}
-
-function update_repo {
-	reponame=$(basename $1 | cut -d'.' --complement -f2-)
-
-	cd $sourcedir/$reponame
-	git fetch --all
-
-	echo_red "#### updating $reponame repository"
-	git checkout master
-	if [[ ! -z $(git diff origin/master) ]] ; then
-		git pull origin master
-	fi
-
-	if [[ -z $(git branch | grep 'build') ]]; then
-		git branch build $2
-	else
-		if [[ ! -z $(git diff build $2) ]] ; then
-			git branch -D build
-			git branch build $2
-		fi
-	fi
-	echo_red "#### $reponame updated."
-
-	echo "$reponame tag: $2"
-	git checkout build
 }
 
 function show_help {
@@ -143,45 +116,68 @@ if [ $? -ne 0 ] ; then
 fi
 trap exitfunc ERR
 
+#		update_repo git@github.com:ASTRO-BO/PacketLib.git v4.3.3
+#		update_repo git@github.com:ASTRO-BO/RTAConfig.git v1.0.1
+#		update_repo git@github.com:ASTRO-EDU/RTACoreIce.git v1.1.0
+#		update_repo git@github.com:ASTRO-EDU/RTAEBSimIce.git v1.0.2
+#		update_repo git@github.com:ASTRO-BO/RTAMonitor.git v1.0.2
+#		update_repo git@github.com:ASTRO-BO/RTAViewArray.git v1.0.1
+#		update_repo git@github.com:ASTRO-BO/RTAViewCamera.git v1.0.1
+#		update_repo git@github.com:ASTRO-BO/RTAtelem.git v1.6.0
+#		update_repo git@github.com:ASTRO-BO/RTAtelemDemo.git v1.5.0
+#		update_repo git@github.com:ASTRO-BO/libQLBase.git v0.3.3
+
 #################################################
-# download/update repositories
+# generate profile and load it
 
-if [[ $clean != "clean" && -z $skip_update ]] ; then
-	git submodule update --init
+if [[ $clean != "clean" ]] ; then
 
-	if [[ $devel == "yes" ]] ; then
-		update_repo git@github.com:ASTRO-BO/PacketLib.git master
-		update_repo git@github.com:ASTRO-BO/RTAConfig.git master
-		update_repo git@github.com:ASTRO-EDU/RTACoreIce.git master
-		update_repo git@github.com:ASTRO-EDU/RTAEBSimIce.git master
-		update_repo git@github.com:ASTRO-BO/RTAMonitor.git master
-		update_repo git@github.com:ASTRO-BO/RTAViewArray.git master
-		update_repo git@github.com:ASTRO-BO/RTAViewCamera.git master
-		update_repo git@github.com:ASTRO-BO/RTAtelem.git master
-		update_repo git@github.com:ASTRO-BO/RTAtelemDemo.git master
-		update_repo git@github.com:ASTRO-BO/libQLBase.git master
-	else
-		update_repo git@github.com:ASTRO-BO/PacketLib.git v4.3.3
-		update_repo git@github.com:ASTRO-BO/RTAConfig.git v1.0.1
-		update_repo git@github.com:ASTRO-EDU/RTACoreIce.git v1.1.0
-		update_repo git@github.com:ASTRO-EDU/RTAEBSimIce.git v1.0.2
-		update_repo git@github.com:ASTRO-BO/RTAMonitor.git v1.0.2
-		update_repo git@github.com:ASTRO-BO/RTAViewArray.git v1.0.1
-		update_repo git@github.com:ASTRO-BO/RTAViewCamera.git v1.0.1
-		update_repo git@github.com:ASTRO-BO/RTAtelem.git v1.6.0
-		update_repo git@github.com:ASTRO-BO/RTAtelemDemo.git v1.5.0
-		update_repo git@github.com:ASTRO-BO/libQLBase.git v0.3.3
-	fi
+echo_red "#### generating profile"
+
+cat << EOF > profile_rtaproto1
+#!/usr/bin/env bash
+
+rtaproto1_prefix=$prefix
+include_paths="\$rtaproto1_prefix/include"
+lib_paths="\$rtaproto1_prefix/lib"
+bin_paths="\$rtaproto1_prefix/bin"
+
+if [[ -z \$C_INCLUDE_PATH || \$C_INCLUDE_PATH != *"\$include_paths"* ]] ; then
+    export C_INCLUDE_PATH="\$include_paths"\${C_INCLUDE_PATH:+:\$C_INCLUDE_PATH}
+fi
+if [[ -z \$CPLUS_INCLUDE_PATH || \$CPLUS_INCLUDE_PATH != *"\$include_paths"* ]] ; then
+    export CPLUS_INCLUDE_PATH="\$include_paths"\${CPLUS_INCLUDE_PATH:+:\$CPLUS_INCLUDE_PATH}
+fi
+if [[ -z \$PATH || \$PATH != *"\$bin_paths"* ]] ; then
+    export PATH="\$bin_paths"\${PATH:+:\$PATH}
+fi
+if [[ -z \$CMAKE_INCLUDE_PATH || \$CMAKE_INCLUDE_PATH != *"\$include_paths"* ]] ; then
+    export CMAKE_INCLUDE_PATH="\$include_paths"\${CMAKE_INCLUDE_PATH:+:\$CMAKE_INCLUDE_PATH}
+fi
+if [[ -z \$CMAKE_LIBRARY_PATH || \$CMAKE_LIBRARY_PATH != *"\$lib_paths"* ]] ; then
+    export CMAKE_LIBRARY_PATH="\$lib_paths"\${CMAKE_LIBRARY_PATH:+:\$CMAKE_LIBRARY_PATH}
+fi
+if [[ -z \$LIBRARY_PATH || \$LIBRARY_PATH != *"\$lib_paths"* ]] ; then
+    export LIBRARY_PATH="\$lib_paths"\${LIBRARY_PATH:+:\$LIBRARY_PATH}
+fi
+if [[ -z \$LD_LIBRARY_PATH || \$LD_LIBRARY_PATH != *"\$lib_paths"* ]] ; then
+    export LD_LIBRARY_PATH="\$lib_paths"\${LD_LIBRARY_PATH:+:\$LD_LIBRARY_PATH}
+fi
+if [[ -z \$DYLD_LIBRARY_PATH || \$DYLD_LIBRARY_PATH != *"\$lib_paths"* ]] ; then
+    export DYLD_LIBRARY_PATH="\$lib_paths"\${DYLD_LIBRARY_PATH:+:\$DYLD_LIBRARY_PATH}
+fi
+if [[ -z \$PYTHONPATH || \$PYTHONPATH != *"\$lib_paths"* ]] ; then
+    export PYTHONPATH="\$lib_paths"\${PYTHONPATH:+:\$PYTHONPATH}
 fi
 
-#################################################
-# add prefix path to the environment
-export C_INCLUDE_PATH="$prefix/$i/include"${C_INCLUDE_PATH:+:$C_INCLUDE_PATH}
-export CPLUS_INCLUDE_PATH="$prefix/$i/include"${CPLUS_INCLUDE_PATH:+:$CPLUS_INCLUDE_PATH}
-export CMAKE_INCLUDE_PATH="$prefix/$i/include"${CMAKE_INCLUDE_PATH:+:$CMAKE_INCLUDE_PATH}
-export LIBRARY_PATH="$prefix/$i/lib"${LIBRARY_PATH:+:$LIBRARY_PATH}
-export CMAKE_LIBRARY_PATH="$prefix/$i/lib"${CMAKE_LIBRARY_PATH:+:$CMAKE_LIBRARY_PATH}
-export CTARTA=$prefix
+export CTARTA=\$rtaproto1_prefix
+
+EOF
+
+echo_red "#### loading profile"
+. profile_rtaproto1
+
+fi
 
 #################################################
 # build packages
@@ -228,6 +224,7 @@ done
 
 if [[ $1 != "clean" ]] ; then
 	cd $sourcedir
+	$sudo cp -p profile_rtaproto1 $prefix/share
 	$sudo cp -p rtaproto1 $prefix/bin
 	$sudo cp -p rtaproto1_gui $prefix/bin
 	$sudo cp -p rtaproto1_zmq $prefix/bin
